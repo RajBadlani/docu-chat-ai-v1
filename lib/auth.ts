@@ -1,0 +1,19 @@
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import { prisma } from "./prisma";
+import { nextCookies } from "better-auth/next-js";
+
+
+export const auth = betterAuth({
+    database : prismaAdapter(prisma , {provider : "postgresql" }),
+    emailAndPassword : { 
+        enabled : true,
+        minPasswordLength : 6,
+        autoSignIn : false,
+    },
+    plugins : [nextCookies()],
+    session : {
+        expiresIn : 7 * 24* 60*60,
+        updateAge : 24*60*60
+    }
+})
