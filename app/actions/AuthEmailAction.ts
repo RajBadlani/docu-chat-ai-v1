@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { signInSchema, signUpSchema } from "@/lib/validation";
+import { redirect } from "next/navigation";
 
 import { headers } from "next/headers";
 
@@ -80,4 +81,16 @@ export async function SignUpEmail(formData: FormData) {
     console.error("Signup Error:", error);
     return { success :false , message: "Oops! Something went wrong while signing up." };
   }
+}
+
+export async function SignOutEmail() {
+  try {
+    await auth.api.signOut({
+      headers: await headers(),
+    });
+  } catch (error) {
+    console.error("Sign-out failed:", error);
+    return { error: "Oops! Something went wrong while signing out." };
+  }
+  redirect("/sign-in");
 }

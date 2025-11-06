@@ -23,14 +23,14 @@ export async function POST(request: Request) {
       );
     const MAX_FILE_SIZE = 25 * 1024 * 1024;
     if (pdfSize > MAX_FILE_SIZE) {
-      return Response.json(
-        { error: "File too large (max 25MB" },
+      return NextResponse.json(
+        { success: false, message: "File too large (max 25MB" },
         { status: 400 }
       );
     }
     if (!pdfType.startsWith("application/pdf")) {
-      return Response.json(
-        { error: "Only PDF files allowed" },
+      return NextResponse.json(
+        { success: false, message: "Only PDF files allowed" },
         { status: 400 }
       );
     }
