@@ -5,7 +5,9 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import SignOutButton from "@/components/SignOutButton";
-import UploadFileComponent from "@/components/UploadFileComponent";
+import UploadPdfComponent from "@/components/UploadPdfComponent";
+import PdfViewerComponent from "@/components/PdfViewerComponent";
+
 
 const DashboardPage = async () => {
   const session = await auth.api.getSession({
@@ -52,9 +54,9 @@ const DashboardPage = async () => {
 
       <main className="flex flex-col items-center justify-start gap-6 mt-6 mx-auto w-full max-w-4xl">
         {/* <UploadComponent /> */}
-          <UploadFileComponent/>
+          <UploadPdfComponent/>
         {/* Info box */}
-        {/* <UploadFileInfoComponent /> */}
+        <PdfViewerComponent/>
       </main>
     </div>
     </>

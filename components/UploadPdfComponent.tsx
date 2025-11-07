@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { Button } from "./ui/button";
 import { Spinner } from "./ui/spinner";
 
-const UploadFileComponent = () => {
+const UploadPdfComponent = () => {
   const [uploading, setIsUploading] = useState(false);
   const router = useRouter();
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -122,4 +122,4 @@ const UploadFileComponent = () => {
   );
 };
 
-export default UploadFileComponent;
+export default UploadPdfComponent;
