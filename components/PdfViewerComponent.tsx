@@ -14,7 +14,7 @@ const PdfViewerComponent = async () => {
 
   const userPdfs = await prisma.pdf.findMany({
     where: { userId: session.user.id },
-    select: { name: true, size: true, id: true },
+    select: { name: true, size: true, id: true , isIngested : true },
   });
 
   return (
@@ -51,7 +51,7 @@ const PdfViewerComponent = async () => {
 
                 {/* Right side: Future action buttons */}
                 <div className="flex items-center gap-3">
-                  <PdfIconComponent pdfId={file.id} />
+                  <PdfIconComponent pdfId={file.id} isIngested={file.isIngested}/>
                 </div>
               </div>
             ))

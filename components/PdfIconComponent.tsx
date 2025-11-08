@@ -1,6 +1,6 @@
 "use client";
 
-import { Eye, Trash, Loader2 } from "lucide-react";
+import { Eye, Trash, Loader2 ,MessageSquare} from "lucide-react";
 import { Button } from "./ui/button";
 import {
   AlertDialog,
@@ -17,8 +17,15 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-const PdfIconComponent = ({ pdfId }: { pdfId: string }) => {
+interface PDFIconProps {
+  pdfId : string;
+  isIngested : boolean ;
+}
+
+const PdfIconComponent = ({ pdfId , isIngested } : PDFIconProps) => {
   const [loadingDelete, setLoadingDelete] = useState(false);
+  const [ingested, setIngested] = useState(isIngested);
+  const [loadingIngestion, setLoadingIngestion] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
@@ -53,22 +60,54 @@ const PdfIconComponent = ({ pdfId }: { pdfId: string }) => {
     }
   };
 
+  const handleClick = async () => {
+    if(ingested){
+      toast.info("This PDF is already ingested — ready to chat!");
+      return;
+    }
+    setLoadingIngestion(true);
+    try {
+      const res = await fetch("/api/pdf/ingest", {
+        method: "POST",
+        headers: {
+        "Content-Type": "application/json",
+      },
+        body: JSON.stringify({pdfId}),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+      throw new Error(data.message || "Failed to ingest the PDF");
+    }
+      toast.success(  data.message || "PDF ingested successfully !");
+      setIngested(true)
+      router.refresh();
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Unable to ingest the PDF"
+      );
+    } finally {
+      setLoadingIngestion(false);
+    }
+  };
+
   return (
     <div className="flex items-center gap-3 sm:gap-4">
-      {/* View PDF */}
       <button
         onClick={handleView}
         title="View PDF"
         aria-label="View PDF"
         disabled={loadingDelete}
         className={`transition-transform duration-150 hover:scale-105 cursor-pointer ${
-          loadingDelete ? "cursor-not-allowed opacity-50" : "hover:text-blue-600"
+          loadingDelete
+            ? "cursor-not-allowed opacity-50"
+            : "hover:text-blue-600"
         }`}
       >
         <Eye width={22} height={22} />
       </button>
 
-      {/* Delete with Confirmation Dialog */}
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogTrigger asChild>
           <button
@@ -82,7 +121,11 @@ const PdfIconComponent = ({ pdfId }: { pdfId: string }) => {
             }`}
           >
             {loadingDelete ? (
-              <Loader2 className="animate-spin text-red-400" width={20} height={20} />
+              <Loader2
+                className="animate-spin text-red-400"
+                width={20}
+                height={20}
+              />
             ) : (
               <Trash width={20} height={20} />
             )}
@@ -93,7 +136,8 @@ const PdfIconComponent = ({ pdfId }: { pdfId: string }) => {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete PDF?</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this file? This action cannot be undone.
+              Are you sure you want to delete this file? This action cannot be
+              undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
 
@@ -118,15 +162,19 @@ const PdfIconComponent = ({ pdfId }: { pdfId: string }) => {
 
       {/* Chat Button */}
       <Button
-        disabled={loadingDelete}
+      onClick={handleClick}
+        disabled={loadingDelete || loadingIngestion }
         className={`bg-blue-600 text-white rounded-md px-3 py-1.5 text-sm font-medium 
           transition-all duration-200 hover:bg-blue-700 
           disabled:opacity-50 disabled:cursor-not-allowed`}
       >
-        {loadingDelete ? (
+        {loadingDelete || loadingIngestion ? (
           <Loader2 className="animate-spin text-white w-4 h-4" />
         ) : (
-          "Chat"
+          <>
+          <MessageSquare className="w-4 h-4" />
+            <span>{isIngested ? "Chat Ready ✅" : "Chat"}</span>
+          </>
         )}
       </Button>
     </div>
