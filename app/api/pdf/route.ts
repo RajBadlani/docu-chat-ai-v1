@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { s3UploadUrl } from "@/lib/s3";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
@@ -54,8 +55,52 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     console.error("Error creating upload URL:", error);
-    return Response.json(
-      { sucess: false, message: "Failed to create upload URL" },
+    return NextResponse.json(
+      { success: false, message: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (!session) {
+    return NextResponse.json(
+      { success: false, message: "Unauthorized" },
+      { status: 401 }
+    );
+  }
+  try {
+
+    const pdfs = await prisma.pdf.findMany({
+      where: { userId: session.user.id },
+      select: {
+        id: true,
+        name: true,
+        size: true,
+        isIngested: true,
+        createdAt: true,
+        user : true 
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: pdfs.length > 0 ? "PDFs found" : "No PDFs uploaded yet",
+        data: pdfs,
+      },
+      { status: 200 }
+    );
+
+  } catch (error) {
+    
+    console.error("Error in fetching PDF's :", error);
+    return NextResponse.json(
+      { success: false, message: "Internal Server Error" },
       { status: 500 }
     );
   }
