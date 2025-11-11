@@ -1,3 +1,4 @@
+"use server"
 import SignUpForm from "@/components/SignUpForm"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"

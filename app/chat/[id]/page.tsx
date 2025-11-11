@@ -16,8 +16,8 @@ const ChatPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   if (!id) redirect("/dashboard");
 
   return (
-    <div className="flex h-screen">
-      
+    <div className="flex h-screen w-full">
+      Kese ho bhai 
     </div>
   );
 };
