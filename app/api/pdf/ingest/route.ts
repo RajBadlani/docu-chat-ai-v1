@@ -33,7 +33,7 @@ export async function POST(req: Request) {
       );
     if (pdf.isIngested) {
       return NextResponse.json(
-        { success: true, message: "PDF already ingested — ready to chat!" },
+        { success: true, message: "PDF ingested — ready to chat!" },
         { status: 200 }
       );
     }

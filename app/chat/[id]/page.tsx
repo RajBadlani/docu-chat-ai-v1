@@ -1,8 +1,9 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
-// import SidebarComponent from "@/components/SidebarComponent";
-// import { toast } from "sonner";
+import PdfClientWrapper from "@/components/PdfClientWrapper";
+
+
 
 const ChatPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   const session = await auth.api.getSession({
@@ -15,9 +16,10 @@ const ChatPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   const id = (await params).id;
   if (!id) redirect("/dashboard");
 
+
   return (
     <div className="flex h-screen w-full">
-      Kese ho bhai 
+      <PdfClientWrapper pdfId={id}/>
     </div>
   );
 };

@@ -16,14 +16,14 @@ export default function ChatLayout({
     <SidebarProvider>
       <div className="flex h-screen w-screen ">
         <div
-          className={`bg-red-200 transition-all duration-300 ${
-            !isCollapsed ? "w-73" : "w-19"
+          className={` transition-all duration-300 ease-in-out ${
+            !isCollapsed ? "w-72" : "w-16"
           }`}
         >
           <SidebarComponent isCollapsed={isCollapsed}
           setIsCollapsed={setIsCollapsed}/>
         </div>
-        <div className="flex-1 bg-blue-300 transition-all duration-300">
+        <div className="flex-1 bg-pattern transition-all duration-300">
           {children}
         </div>
       </div>

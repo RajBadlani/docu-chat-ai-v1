@@ -14,7 +14,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 interface PDFIconProps {
@@ -62,8 +62,7 @@ const PdfIconComponent = ({ pdfId , isIngested } : PDFIconProps) => {
 
   const handleClick = async () => {
     if(ingested){
-      toast.info("This PDF is already ingested — ready to chat!");
-      return;
+      router.push(`/chat/${pdfId}`)
     }
     setLoadingIngestion(true);
     try {
@@ -82,7 +81,7 @@ const PdfIconComponent = ({ pdfId , isIngested } : PDFIconProps) => {
     }
       toast.success(  data.message || "PDF ingested successfully !");
       setIngested(true)
-      router.refresh();
+      router.push(`/chat/${pdfId}`);
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Unable to ingest the PDF"
