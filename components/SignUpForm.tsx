@@ -1,34 +1,35 @@
-"use client"
+"use client";
 
-import { MessageCircleHeart } from "lucide-react"
-import { Input } from "./ui/input"
-import { Button } from "./ui/button"
-import { Spinner } from "./ui/spinner"
-import Image from "next/image"
-import Link from "next/link"
-import React, { useState } from "react"
-import { SignUpEmail } from "@/app/actions/AuthEmailAction"
-import { toast } from "sonner"
-import { useRouter } from "next/navigation"
+import { MessageCircleHeart } from "lucide-react";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
+import { Spinner } from "./ui/spinner";
+import Image from "next/image";
+import Link from "next/link";
+import React, { useState } from "react";
+import { SignUpEmail } from "@/actions/AuthEmailAction";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import OAuthButton from "./OAuthButton";
 
 const SignUpForm = () => {
-    const router = useRouter()
-    const [pending , setPending] = useState(false)
-    const handleSubmit = async(e : React.FormEvent<HTMLFormElement>)=>{
-        e.preventDefault()
-        setPending(true)
-        const formData = new FormData(e.target as HTMLFormElement)
-        const { success , message } = await SignUpEmail(formData)
-        if(!success){
-            toast.error(message)
-            setPending(false)
-        }else{
-            toast.success(message)
-            router.push('/sign-in')
-        }
+  const router = useRouter();
+  const [pending, setPending] = useState(false);
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setPending(true);
+    const formData = new FormData(e.target as HTMLFormElement);
+    const { success, message } = await SignUpEmail(formData);
+    if (!success) {
+      toast.error(message);
+      setPending(false);
+    } else {
+      toast.success(message);
+      router.push("/sign-in");
     }
+  };
   return (
-        <main className=" flex flex-col items-center justify-center min-h-screen min-w-screen">
+    <main className=" flex flex-col items-center justify-center min-h-screen min-w-screen">
       <section className=" flex flex-col items-center justify-center bg-white rounded-xl shadow-lg px-10 py-8 space-y-8">
         <div className="flex flex-col justify-center items-center gap-3">
           <div className="flex justify-center items-center gap-4">
@@ -106,34 +107,7 @@ const SignUpForm = () => {
           <div className="border border-gray-300 w-15 sm:w-20"></div>
         </div>
         <div className="flex flex-col gap-5 w-full max-w-sm">
-          <div className="flex justify-center items-center">
-            <Button
-              type="submit"
-              className="w-full bg-white text-gray-800 border border-gray-300 font-medium py-4 rounded-md hover:bg-gray-200 transition cursor-pointer"
-            >
-              <Image
-                src={"/google.png"}
-                alt="Google-icon"
-                height={20}
-                width={20}
-              />
-              Continue with Google
-            </Button>
-          </div>
-          <div className="flex justify-center items-center">
-            <Button
-              type="submit"
-              className="w-full bg-white text-gray-800 border border-gray-300 font-medium py-4 rounded-md hover:bg-gray-200 transition cursor-pointer"
-            >
-              <Image
-                src={"/github.png"}
-                alt="Google-icon"
-                height={20}
-                width={20}
-              />
-              Continue with Github
-            </Button>
-          </div>
+          <OAuthButton />
         </div>
 
         <div className="flex justify-center items-center gap-2">
@@ -145,7 +119,7 @@ const SignUpForm = () => {
         </div>
       </section>
     </main>
-  )
-}
+  );
+};
 
-export default SignUpForm
+export default SignUpForm;

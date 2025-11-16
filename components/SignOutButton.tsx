@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { User } from "lucide-react";
-import { SignOutEmail } from "@/app/actions/AuthEmailAction";
+import { SignOutEmail } from "@/actions/AuthEmailAction";
 
 interface SignOutButtonProps {
   name?: string;

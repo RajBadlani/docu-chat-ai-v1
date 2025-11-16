@@ -1,35 +1,38 @@
-"use client"
+"use client";
 
-import { MessageCircleHeart } from "lucide-react"
-import { Input } from "./ui/input"
-import { Button } from "./ui/button"
-import { Spinner } from "./ui/spinner"
-import Image from "next/image"
-import Link from "next/link"
-import { useState } from "react"
-import { SignInWithEmail } from "@/app/actions/AuthEmailAction"
-import { toast } from "sonner"
-import { useRouter } from "next/navigation"
+import { MessageCircleHeart } from "lucide-react";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
+import { Spinner } from "./ui/spinner";
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
+
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { SignInWithEmail } from "@/actions/AuthEmailAction";
+import { authClient } from "@/lib/auth-client";
+import OAuthButton from "./OAuthButton";
 
 const SignInForm = () => {
-  const router = useRouter()
-  const [pending , setPending] = useState(false)
+  const router = useRouter();
+  const [pending, setPending] = useState(false);
 
-  const handleSubmit = async(e : React.FormEvent<HTMLFormElement>)=>{
-    e.preventDefault()
-    setPending(true)
-    const formData = new FormData(e.target as HTMLFormElement)
-    const { success , message} = await SignInWithEmail(formData)
-    if( !success){
-      toast.error(message)
-      setPending(false)
-    }else{
-      toast.success(message)
-      router.push("/dashboard")
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setPending(true);
+    const formData = new FormData(e.target as HTMLFormElement);
+    const { success, message } = await SignInWithEmail(formData);
+    if (!success) {
+      toast.error(message);
+      setPending(false);
+    } else {
+      toast.success(message);
+      router.push("/dashboard");
     }
-  }
+  };
   return (
-        <main className=" flex flex-col items-center justify-center min-h-screen min-w-screen">
+    <main className=" flex flex-col items-center justify-center min-h-screen min-w-screen">
       <section className=" flex flex-col items-center justify-center bg-white rounded-xl shadow-lg px-10 py-8 space-y-8">
         <div className="flex flex-col justify-center items-center gap-3">
           <div className="flex justify-center items-center gap-4">
@@ -46,7 +49,10 @@ const SignInForm = () => {
           </p>
         </div>
 
-         <form className="flex flex-col gap-5 w-full max-w-sm" onSubmit={handleSubmit}>
+        <form
+          className="flex flex-col gap-5 w-full max-w-sm"
+          onSubmit={handleSubmit}
+        >
           <div className="space-y-2">
             <label
               htmlFor="email"
@@ -54,7 +60,12 @@ const SignInForm = () => {
             >
               Email Address
             </label>
-            <Input id="email" name="email" type="email" placeholder="Enter your email" />
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="Enter your email"
+            />
           </div>
           <div className="space-y-2">
             <label
@@ -67,7 +78,7 @@ const SignInForm = () => {
               id="password"
               type="password"
               placeholder="Enter your password"
-               name="password"
+              name="password"
             />
           </div>
           <Button
@@ -75,7 +86,7 @@ const SignInForm = () => {
             disabled={pending}
             className="w-full bg-blue-600 text-white font-medium py-2 rounded-md hover:bg-blue-700 transition cursor-pointer"
           >
-            { pending && <Spinner/>}
+            {pending && <Spinner />}
             Sign In
           </Button>
         </form>
@@ -85,37 +96,7 @@ const SignInForm = () => {
           <div className="border border-gray-300 w-15 sm:w-20"></div>
         </div>
         <div className="flex flex-col gap-5 w-full max-w-sm">
-          <div className="flex justify-center items-center">
-            <Button
-              type="submit"
-              
-              className="w-full bg-white text-gray-800 border border-gray-300 font-medium py-4 rounded-md hover:bg-gray-200 transition cursor-pointer"
-            >
-            <Image
-              src={"/google.png"}
-              alt="Google-icon"
-              height={20}
-              width={20}
-            />
-              Continue with Google
-            </Button>
-          </div>
-          <div className="flex justify-center items-center">
-            <Button
-              type="submit"
-              className="w-full bg-white text-gray-800 border border-gray-300 font-medium py-4 rounded-md hover:bg-gray-200 transition cursor-pointer"
-              
-            >
-            <Image
-              src={"/github.png"}
-              alt="Google-icon"
-              height={20}
-              width={20}
-            />
-              Continue with Github
-            </Button>
-          </div>
-
+          <OAuthButton />
         </div>
 
         <div className="flex justify-center items-center gap-2">
@@ -127,7 +108,7 @@ const SignInForm = () => {
         </div>
       </section>
     </main>
-  )
-}
+  );
+};
 
-export default SignInForm
+export default SignInForm;
