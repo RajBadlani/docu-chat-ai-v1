@@ -23,7 +23,7 @@ export default function ChatLayout({
           <SidebarComponent isCollapsed={isCollapsed}
           setIsCollapsed={setIsCollapsed}/>
         </div>
-        <div className="flex-1 bg-pattern transition-all duration-300">
+        <div className="flex-1 bg-pattern w-full overflow-x-hidden transition-all duration-300">
           {children}
         </div>
       </div>

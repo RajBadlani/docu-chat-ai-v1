@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { FileText } from "lucide-react";
 import PdfIconComponent from "./PdfIconComponent";
 
-const PdfViewerComponent = async () => {
+const PdfUploadComponent = async () => {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -66,4 +66,4 @@ const PdfViewerComponent = async () => {
   );
 };
 
-export default PdfViewerComponent;
+export default PdfUploadComponent;

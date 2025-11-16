@@ -79,7 +79,6 @@ const UploadPdfComponent = () => {
             accept="application/pdf"
             className="sr-only"
             onChange={handleFile}
-            // Add onChange handler for files when you wire up JS
           />
 
           <div className="flex flex-col items-center justify-center text-center p-6 sm:p-10 h-[40vh] sm:h-[45vh] md:h-[50vh] min-h-[220px]">

@@ -6,7 +6,8 @@ import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import SignOutButton from "@/components/SignOutButton";
 import UploadPdfComponent from "@/components/UploadPdfComponent";
-import PdfViewerComponent from "@/components/PdfViewerComponent";
+import PdfUploadComponent from "@/components/PdfUploadComponent";
+
 
 
 const DashboardPage = async () => {
@@ -56,7 +57,7 @@ const DashboardPage = async () => {
         {/* <UploadComponent /> */}
           <UploadPdfComponent/>
         {/* Info box */}
-        <PdfViewerComponent/>
+        <PdfUploadComponent/>
       </main>
     </div>
     </>

@@ -171,8 +171,7 @@ const PdfIconComponent = ({ pdfId , isIngested } : PDFIconProps) => {
           <Loader2 className="animate-spin text-white w-4 h-4" />
         ) : (
           <>
-          <MessageSquare className="w-4 h-4" />
-            <span>{isIngested ? "Chat Ready ✅" : "Chat"}</span>
+            <span>{isIngested ? "Chat Ready" : "Chat"}</span>
           </>
         )}
       </Button>
