@@ -80,13 +80,13 @@ const SidebarComponent = ({
         {!isCollapsed ? (
           <div className="flex items-center justify-between px-2 pt-2 pb-4 border-b ">
             <h2 className="text-lg font-semibold">Docu Chat AI</h2>
-            <ChevronRight
+            <ChevronLeft
               className="h-6 w-6 bg-blue-200 rounded-full p-1 cursor-pointer text-blue-800"
               onClick={handleCollapse}
             />
           </div>
         ) : (
-          <ChevronLeft
+          <ChevronRight
             className="h-6 w-6 bg-blue-200 rounded-full p-1 cursor-pointer text-blue-800"
             onClick={handleCollapse}
           />

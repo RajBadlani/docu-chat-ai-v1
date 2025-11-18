@@ -27,7 +27,7 @@ import { FormEvent } from "react";
 import { MessageSquare } from "lucide-react";
 
 const ChatbotComponent = () => {
-  const { messages, sendMessage, status } = useChat({
+  const { messages, sendMessage, status, stop } = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
   });
 
@@ -36,40 +36,57 @@ const ChatbotComponent = () => {
     event: FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
+
     const text = message.text.trim();
-    if (text) {
+    if (status === "streaming") {
+      stop();
+    } else if (text) {
       sendMessage({ parts: [{ type: "text", text }] });
     }
   };
 
   return (
     <div className="flex flex-col h-full w-full p-4 border rounded-lg bg-gray-50 min-w-0">
+    
       <Conversation className="grow min-w-0">
         <ConversationContent>
           {messages.length === 0 ? (
-            <ConversationEmptyState className="">
+            <ConversationEmptyState>
               <div className="flex flex-col gap-2 justify-center items-center">
                 <MessageSquare className="size-12 text-blue-500" />
-                <h2 className="text-lg italic">Start a conversation</h2>
+                <h2 className="text-lg">Start a conversation</h2>
               </div>
             </ConversationEmptyState>
           ) : (
-            messages.map((message) => (
-              <Message from={message.role} key={message.id}>
-                <MessageContent className="bg-blue-50 p-4 rounded-lg">
-                  {message.parts.map((part, i) => {
-                    if (part.type === "text") {
-                      return (
-                        <MessageResponse key={i}>{part.text}</MessageResponse>
-                      );
-                    }
-                    return null;
-                  })}
-                </MessageContent>
-              </Message>
-            ))
+            <>
+              {messages.map((message) => (
+                <Message from={message.role} key={message.id}>
+                  <MessageContent className="bg-blue-50 p-4 rounded-lg">
+                    {message.parts.map((part, i) => {
+                      if (part.type === "text") {
+                        return (
+                          <MessageResponse key={i}>{part.text}</MessageResponse>
+                        );
+                      }
+                      return null;
+                    })}
+                  </MessageContent>
+                </Message>
+              ))}
+
+              {status === "submitted" && (
+                <Message from="assistant" key="typing-indicator">
+                  <MessageContent className="p-4 rounded-lg bg-gray-200 animate-pulse">
+                    <div className="flex items-center space-x-1">
+                      <span className="w-2 h-2 rounded-full bg-gray-500 animate-bounce"></span>
+                      <span className="w-2 h-2 rounded-full bg-gray-500 animate-bounce delay-150"></span>
+                      <span className="w-2 h-2 rounded-full bg-gray-500 animate-bounce delay-300"></span>
+                    </div>
+                  </MessageContent>
+                </Message>
+              )}
+            </>
           )}
-          
         </ConversationContent>
         <ConversationScrollButton />
       </Conversation>
@@ -84,8 +101,14 @@ const ChatbotComponent = () => {
           className="w-full min-w-0 max-h-25 overflow-y-auto resize-none wrap-break-words"
         />
         <PromptInputSubmit
-          status={status === "streaming" ? "streaming" : "ready"}
-          className="bg-blue-500 m-3 text-white hover:bg-blue-600 disabled:opacity-50"
+          status={status}
+          disabled={ status == "submitted"}
+          className={`m-3 text-white disabled:opacity-50 hover:opacity-90 
+            ${
+              status === "streaming"
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-blue-500 hover:bg-blue-600"
+            }`}
         />
       </PromptInput>
     </div>

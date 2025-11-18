@@ -4,8 +4,9 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { signInSchema, signUpSchema } from "@/lib/validation";
 import { redirect } from "next/navigation";
-
 import { headers } from "next/headers";
+import { APIError } from "better-auth/api";
+
 
 export async function SignInWithEmail(formData: FormData) {
   const rawData = {
@@ -14,28 +15,42 @@ export async function SignInWithEmail(formData: FormData) {
   };
 
   const validatedData = signInSchema.safeParse(rawData);
-  if (!validatedData.success)
+  if (!validatedData.success) {
     return {
       success: false,
-      message: validatedData.error.issues.at(0)?.message || "Invalid Data",
+      message: validatedData.error.issues[0]?.message || "Invalid Data",
     };
+  }
+
   const { email, password } = validatedData.data;
+
   try {
     const res = await auth.api.signInEmail({
       headers: await headers(),
       body: { email, password },
       asResponse: true,
     });
+
     if (!res.ok) {
-      return { success: false, message: "Invalid Email or Password" };
+      const err = await res.json().catch(() => null);
+
+      return {
+        success: false,
+        message: err?.message || "Invalid Email or Password",
+      };
     }
-    return { success: true, message: "Logged In Sucessfully" };
+
+    return { success: true, message: "Logged In Successfully" };
   } catch (error) {
-    if (error instanceof Error)
-      return { success: false, message: "Oops! Something went wrong" };
+    console.error("Sign-in Error:", error);
+
+    if (error instanceof APIError)
+      return { success: false, message: error.message };
+
     return { success: false, message: "Internal Server Error" };
   }
 }
+
 
 export async function SignUpEmail(formData: FormData) {
   const rawData = {
@@ -43,20 +58,28 @@ export async function SignUpEmail(formData: FormData) {
     email: String(formData.get("email")),
     password: String(formData.get("password")),
   };
+
   const validatedData = signUpSchema.safeParse(rawData);
-  if (!validatedData.success)
+  if (!validatedData.success) {
     return {
       success: false,
-      message: validatedData.error.issues.at(0)?.message || "Invalid Data",
+      message: validatedData.error.issues[0]?.message || "Invalid Data",
     };
+  }
+
   const { name, email, password } = validatedData.data;
 
   try {
+  
     const existingUser = await prisma.user.findUnique({
-      where: { email: email },
+      where: { email },
     });
-    if (existingUser)
-      return { success: false, message: "User already exist with this email" };
+    if (existingUser) {
+      return {
+        success: false,
+        message: "User already exists with this email",
+      };
+    }
 
     const res = await auth.api.signUpEmail({
       headers: await headers(),
@@ -67,21 +90,32 @@ export async function SignUpEmail(formData: FormData) {
       },
       asResponse: true,
     });
+
     if (!res.ok) {
-      let message = "Failed";
-      if (res.status == 422) {
-        message = "User already exists with this email";
-      } else {
-        message = "Signup failed, please try again";
-      }
-      return { success: false, message: message };
+      const err = await res.json().catch(() => null);
+      const message =
+        err?.message ||
+        (res.status === 422
+          ? "User already exists with this email"
+          : "Signup failed, please try again");
+
+      return { success: false, message };
     }
+
     return { success: true, message: "Signed Up Successfully" };
   } catch (error) {
     console.error("Signup Error:", error);
-    return { success :false , message: "Oops! Something went wrong while signing up." };
+
+    if (error instanceof APIError)
+      return { success: false, message: error.message };
+
+    return {
+      success: false,
+      message: "Oops! Something went wrong while signing up.",
+    };
   }
 }
+
 
 export async function SignOutEmail() {
   try {
@@ -89,9 +123,9 @@ export async function SignOutEmail() {
       headers: await headers(),
     });
   } catch (error) {
-    console.error("Sign-out failed:", error);
+    console.error("Sign-out Error:", error);
     return { error: "Oops! Something went wrong while signing out." };
   }
+
   redirect("/sign-in");
 }
-
