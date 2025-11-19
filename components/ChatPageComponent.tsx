@@ -27,7 +27,7 @@ export default function ChatPageComponent({
         <ResizableHandle className="bg-gray-400 hover:bg-blue-400 cursor-col-resize transition-colors duration-200" />
 
         <ResizablePanel defaultSize={60} minSize={50} className="p-3">
-          <ChatbotComponent />
+          <ChatbotComponent pdfId={pdfId}/>
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>

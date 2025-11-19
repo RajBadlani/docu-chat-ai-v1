@@ -26,7 +26,7 @@ import {
 import { FormEvent } from "react";
 import { MessageSquare } from "lucide-react";
 
-const ChatbotComponent = () => {
+const ChatbotComponent = ({ pdfId }: { pdfId: string }) => {
   const { messages, sendMessage, status, stop } = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
   });
@@ -41,13 +41,12 @@ const ChatbotComponent = () => {
     if (status === "streaming") {
       stop();
     } else if (text) {
-      sendMessage({ parts: [{ type: "text", text }] });
+      sendMessage({ parts: [{ type: "text", text }], metadata: { pdfId } });
     }
   };
 
   return (
     <div className="flex flex-col h-full w-full p-4 border rounded-lg bg-gray-50 min-w-0">
-    
       <Conversation className="grow min-w-0">
         <ConversationContent>
           {messages.length === 0 ? (
@@ -102,7 +101,7 @@ const ChatbotComponent = () => {
         />
         <PromptInputSubmit
           status={status}
-          disabled={ status == "submitted"}
+          disabled={status == "submitted"}
           className={`m-3 text-white disabled:opacity-50 hover:opacity-90 
             ${
               status === "streaming"
